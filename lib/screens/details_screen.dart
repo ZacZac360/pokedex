@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 class DetailsScreen extends StatefulWidget {
   final String pokemonUrl;
 
-  DetailsScreen({required this.pokemonUrl});
+  const DetailsScreen({super.key, required this.pokemonUrl});
 
   @override
   _DetailsScreenState createState() => _DetailsScreenState();
@@ -58,8 +58,8 @@ class _DetailsScreenState extends State<DetailsScreen> {
   Widget build(BuildContext context) {
     if (isLoading) {
       return Scaffold(
-        appBar: AppBar(title: Text('Loading...')),
-        body: Center(child: CircularProgressIndicator()),
+        appBar: AppBar(title: const Text('Loading...')),
+        body: const Center(child: CircularProgressIndicator()),
       );
     }
 
@@ -76,7 +76,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
         centerTitle: true,
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -84,7 +84,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
-                boxShadow: [
+                boxShadow: const [
                   BoxShadow(
                     color: Colors.black12,
                     blurRadius: 10,
@@ -98,80 +98,80 @@ class _DetailsScreenState extends State<DetailsScreen> {
                 width: 200,
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             // Basic Info
             Text(
               'ID: #$id',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             Text(
               'Types: ${types.map((type) => type['type']['name'].toUpperCase()).join(', ')}',
               style: TextStyle(fontSize: 16, color: Colors.grey[700]),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             // Flavor Text
             if (flavorText.isNotEmpty) ...[
               Card(
-                margin: EdgeInsets.symmetric(vertical: 10),
+                margin: const EdgeInsets.symmetric(vertical: 10),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Text(
                     flavorText,
-                    style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
+                    style: const TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
                     textAlign: TextAlign.center,
                   ),
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
             ],
             // Abilities Section
             Card(
-              margin: EdgeInsets.symmetric(vertical: 10),
+              margin: const EdgeInsets.symmetric(vertical: 10),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'Abilities',
                       style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     ...abilities.map((ability) {
                       return Padding(
                         padding: const EdgeInsets.symmetric(vertical: 4.0),
                         child: Text(
                           ability['ability']['name'].toUpperCase(),
-                          style: TextStyle(fontSize: 16),
+                          style: const TextStyle(fontSize: 16),
                         ),
                       );
-                    }).toList(),
+                    }),
                   ],
                 ),
               ),
             ),
             // Stats Section
             Card(
-              margin: EdgeInsets.symmetric(vertical: 10),
+              margin: const EdgeInsets.symmetric(vertical: 10),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'Base Stats',
                       style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     ...stats.map((stat) {
                       return _buildStatBar(
                         stat['stat']['name'],
                         stat['base_stat'],
                       );
-                    }).toList(),
+                    }),
                   ],
                 ),
               ),
@@ -188,9 +188,9 @@ class _DetailsScreenState extends State<DetailsScreen> {
       children: [
         Text(
           name.toUpperCase(),
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
-        SizedBox(height: 4),
+        const SizedBox(height: 4),
         Stack(
           children: [
             Container(
@@ -210,7 +210,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
             ),
           ],
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
       ],
     );
   }

@@ -65,22 +65,22 @@ Future<List> fetchPokemonBySearchAndFilter(String query, String filter) async {
         .where((pokemon) => pokemon['name'].toLowerCase().contains(query))
         .toList();
 
-    return Future.wait(matchingPokemon.map((pokemon) async {
+    final detailedPokemon = await Future.wait(matchingPokemon.map((pokemon) async {
       final detailsResponse = await http.get(Uri.parse(pokemon['url']));
       final details = jsonDecode(detailsResponse.body);
       final types = (details['types'] as List).map((typeInfo) => typeInfo['type']['name']).toList();
-
-      // Respect filter type
-      if (filter != 'All' && !types.contains(filter.toLowerCase())) {
-        return null; // Exclude if type doesn't match the filter
-      }
 
       return {
         'name': pokemon['name'],
         'url': pokemon['url'],
         'types': types,
       };
-    }).where((p) => p != null).toList());
+    }));
+
+    // Apply filter after fetching all details
+    return detailedPokemon
+        .where((p) => filter == 'All' || p['types'].contains(filter.toLowerCase()))
+        .toList();
   } else {
     throw Exception('Failed to fetch Pokémon by search and filter');
   }

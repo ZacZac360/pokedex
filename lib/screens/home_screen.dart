@@ -52,19 +52,16 @@ class _HomeScreenState extends State<HomeScreen> {
     });
 
     List data;
-    if (_searchQuery.isNotEmpty) {
-      // Fetch Pokémon by search with respect to filter
+
+    if (_filter == 'Favorites') {
+      // Fetch favorites directly from the provider
+      final favoritesProvider = Provider.of<FavoritesProvider>(context, listen: false);
+      data = favoritesProvider.favorites; // Favorites are preloaded, no API call needed
+    } else if (_searchQuery.isNotEmpty) {
       data = await fetchPokemonBySearchAndFilter(_searchQuery, _filter);
     } else if (_filter == 'All') {
-      // Fetch all Pokémon
       data = await fetchPokemonList(offset: _offset, limit: 20);
-    } else if (_filter == 'Favorites') {
-      // Fetch favorites
-      final favoritesProvider = Provider.of<FavoritesProvider>(context, listen: false);
-      data = await fetchPokemonList(offset: _offset, limit: 20)
-          .then((list) => list.where((p) => favoritesProvider.isFavorite(p['url'])).toList());
     } else {
-      // Fetch Pokémon by type
       data = await fetchPokemonByType(_filter.toLowerCase(), offset: _offset, limit: 20);
     }
 
@@ -74,6 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
       _isLoading = false;
     });
   }
+
 
   void _updateFilter(String filter) {
     setState(() {
@@ -98,7 +96,12 @@ class _HomeScreenState extends State<HomeScreen> {
           custom.SearchBar(onSearch: _updateSearch),
           FilterBar(currentFilter: _filter, onFilterChanged: _updateFilter),
           Expanded(
-            child: GridView.builder(
+            child: _isLoading && _pokemon.isEmpty
+                ? const Center(child: CircularProgressIndicator()) // Show loader if data is loading
+                : _pokemon.isEmpty
+                ? const Center(child: Text("No results found",
+                style: TextStyle(fontSize: 18, color: Colors.grey)))
+                : GridView.builder(
               controller: _scrollController,
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
@@ -106,10 +109,12 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               itemCount: _pokemon.length + (_isLoading ? 1 : 0),
               itemBuilder: (context, index) {
+                // Show loading indicator at the bottom when fetching more data
                 if (index == _pokemon.length) {
                   return const Center(child: CircularProgressIndicator());
                 }
-                // Inside the GridView.builder's itemBuilder:
+
+                // Show the Pokemon Card when data is available
                 return GestureDetector(
                   onTap: () {
                     Navigator.push(
